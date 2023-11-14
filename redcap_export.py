@@ -2,6 +2,9 @@ import os
 import logging
 import requests
 import pandas as pd
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -56,17 +59,50 @@ def save_file(content, file_path):
 
 def get_onedrive_folder():
     # Return the path of the Downloads folder
-    return r'YOUR DESIRED DOWNLOAD DESTINATION PATH'
+    # return os.path.join(os.path.expanduser('~'), 'Downloads')
+    return r'YOUR DESIRED PATH'
 
-def convert_csv_to_xlsx(csv_file_path, xlsx_file_path):
+def convert_csv_to_xlsx_with_table(csv_file_path, xlsx_file_path):
     df = pd.read_csv(csv_file_path)
 
-    df.to_excel(xlsx_file_path, index = False)
+    # Create a Pandas Excel writer using openpyxl as the engine
+    with pd.ExcelWriter(xlsx_file_path, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+
+    # Load the workbook and get the first sheet
+    workbook = load_workbook(xlsx_file_path)
+    worksheet = workbook.active
+
+    # Get the dimensions of the DataFrame for table reference
+    max_row = worksheet.max_row
+    max_col = worksheet.max_column
+
+   # Create a table
+    table = Table(displayName="Table1", ref=f"A1:{get_column_letter(max_col)}{max_row}")
+    
+    # Add a default style with striped rows and banded columns
+    style = TableStyleInfo(name="TableStyleMedium27", showFirstColumn=False,
+                           showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+    table.tableStyleInfo = style
+
+    # Add the table to the worksheet
+    worksheet.add_table(table)
+
+    # Save the workbook
+    workbook.save(xlsx_file_path) 
+
+def get_column_letter(n):
+    string = ""
+    while n > 0:
+        n, remainder = divmod(n - 1 , 26)
+        string = chr(65 + remainder) + string
+    return string
 
 def main():
-    api_key = 'YOUR API_KEY'
-    api_url = 'REDCAP API URL'
-    form_name = 'FORM NAME'
+    api_key = 'YOUR API KEY'
+    api_url = 'YOUR API URL'
+    form_name = 'YOUR FORM NAME'
+
     response_content = make_redcap_request(api_url, api_key, form_name)
 
     if response_content:
@@ -83,7 +119,7 @@ def main():
 
         # Convert the CSV file to Excel format
         try:
-            convert_csv_to_xlsx(csv_file_path, xlsx_file_path)
+            convert_csv_to_xlsx_with_table(csv_file_path, xlsx_file_path)
             logging.info(f'Excel file saved at: {xlsx_file_path}')
         except Exception as e:
             logging.error(f'Error in converting CSV to Excel: {e}')
