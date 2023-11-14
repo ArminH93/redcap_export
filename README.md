@@ -19,7 +19,7 @@ This Python script automates the process of exporting data from REDCap (Research
 ## Usage
 Update the api_key, api_url, and form_name variables in the script with your REDCap API key, REDCap API URL, and the name of the form you wish to download.
 
-To run the script, execute: python redcap_data_export.py
+To run the script, execute: python redcap_export.py
 The script will download the data from REDCap, convert it to an Excel file, and save both CSV and Excel files to the specified location.
 
 ## Configuration
