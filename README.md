@@ -1,5 +1,4 @@
 # REDCap Data Export Tool
-Description
 This Python script automates the process of exporting data from REDCap (Research Electronic Data Capture) in CSV format, converting it to an Excel (XLSX) file, and saving it to a user-defined location, such as a local OneDrive folder. It's designed to facilitate easy and efficient data retrieval and conversion for users who regularly work with REDCap datasets.
 
 ## Features:
