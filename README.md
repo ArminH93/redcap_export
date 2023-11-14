@@ -6,8 +6,7 @@ This Python script automates the process of exporting data from REDCap (Research
 - CSV to Excel Conversion: Converts the downloaded CSV file to an Excel format.
 - Custom Save Location: Saves the files directly to a designated folder, such as OneDrive.
 
-## Getting Started
-### Prerequisites
+## Prerequisites
 - Python 3.x
 - Required Python packages: requests, pandas, openpyxl
 
